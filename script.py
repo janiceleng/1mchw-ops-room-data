@@ -14,9 +14,6 @@ df=df.drop(df.index[[0]])
 # Re-index the dataset because of deleted row
 df=df.reset_index()
 
-# Unstack df so that each service location can be exploited
-df2 = df.unstack()
-
 #### HEADERS ####
 
 # Upload header renaming index
@@ -45,26 +42,33 @@ print services[1]
 
 ##### RESHAPING QUALTRICS OUTPUT ########
 
-#Get number of rows in original df (aka number of total entries)
+# Get number of rows in uploaded csv
 rg = range(df.shape[0])
+
+# Keep track of new rows
+i = 0
 
 # For each row
 for r in rg:
-    # For each potential service location in the data
+    
+    #For each potential service location
     for s in services:
-        # If service location in a row...
-        if type(df2[s[0],r]) == str: #didn't know why is not None wasn't working 
-            
-            # Set values for service location (5)
-            values = [df2[s[0],r], df2[s[1],r],df2[s[2],r], df2[s[3],r],df2[s[4],r]]
-            
-            # Now add common records for that row (40+ in total)
-            for x in col_qual:
-                values.append(df2[x,r])
 
-            df3.loc[r] = pd.Series(values, index=col_agol)
+        if type(df[s[0]][0]) == str:
+
+            #set values for service location (5 total in final)
+            values = [df[s[0]][r], df[s[1]][r], df[s[2]][r], df[s[3]][r], df[s[4]][r]]
+            
+            #Now add common records for that row (40+ in total)
+            for x in col_qual:
+                values.append(df[x][r])
+            
+            print values
+            df3.loc[i] = pd.Series(values, index=col_agol)
+            i+=1
 
 #### FINAL OUTPUT ####
 
 #Final output for ArcGIS online
+df3.to_csv('final.csv')
 df3
