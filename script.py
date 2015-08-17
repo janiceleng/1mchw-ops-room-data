@@ -54,19 +54,29 @@ for r in rg:
     #For each potential service location
     for s in services:
 
-        if type(df[s[0]][0]) == str:
+        if type(df[s[0]][r]) == str:
 
             #set values for service location (5 total in final)
             values = [df[s[0]][r], df[s[1]][r], df[s[2]][r], df[s[3]][r], df[s[4]][r]]
-            
+
             #Now add common records for that row (40+ in total)
             for x in col_qual:
-                values.append(df[x][r])
+
+                #Manually correct the Mobile Health Usage column (MH_Usage)
+                if x == "Q20":
+                    #Change the 2 to 0 ("No")
+                    if df[x][r] == 2:
+                        values.append(df[x][r] - 2)
+                    #1 will remain as 1 ("Yes")
+                    else:
+                        values.append(df[x][r])
+                else:
+                    values.append(df[x][r])
             
-            print values
+            #Populate the new dataframe
             df3.loc[i] = pd.Series(values, index=col_agol)
             i+=1
-
+            
 #### FINAL OUTPUT ####
 
 #Final output for ArcGIS online
