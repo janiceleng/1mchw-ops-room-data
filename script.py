@@ -14,6 +14,13 @@ df=df.drop(df.index[[0]])
 # Re-index the dataset because of deleted row
 df=df.reset_index()
 
+# Rename the first "V1" column because it contains other artifacts
+df = df.rename(columns = {'\xef\xbb\xbfV1':'V1'})
+df.columns[1]
+
+# Convert variable Q20 to integer because we will run operation on it later 
+df['Q20'] = df['Q20'].convert_objects(convert_numeric=True)
+
 #### HEADERS ####
 
 # Upload header renaming index
